@@ -1,12 +1,18 @@
-export default function Layout({ children }) {
-    return (
-        <html lang="en">
-            <head>
-                <title>Your Title</title>
-            </head>
-            <body>
-                {children}
-            </body>
-        </html>
-    );
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'AI Project Manager',
+  description: 'AI-powered project management platform',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="ar" dir="rtl">
+      <body>{children}</body>
+    </html>
+  );
 }
