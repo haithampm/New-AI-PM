@@ -1,1 +1,5 @@
-export default function Home() { return (<main><h1>AI Project Manager Agent</h1><p>Welcome to your AI-powered project management platform</p></main>); }
+import { redirect } from 'next/navigation';
+
+export default function Home() {
+  redirect('/ar');
+}
