@@ -1,39 +1,30 @@
 import type { Config } from 'tailwindcss';
+
 const config: Config = {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
+  content: [
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
   theme: {
     extend: {
       colors: {
-        bg: 'var(--color-bg)',
-        surface: 'var(--color-surface)',
-        'surface-2': 'var(--color-surface-2)',
-        border: 'var(--color-border)',
-        text: 'var(--color-text)',
-        muted: 'var(--color-text-muted)',
-        faint: 'var(--color-text-faint)',
-        primary: 'var(--color-primary)',
-        success: 'var(--color-success)',
-        warning: 'var(--color-warning)',
-        error: 'var(--color-error)',
-        blue: 'var(--color-blue)',
-        purple: 'var(--color-purple)'
+        gray: {
+          950: '#030712',
+          900: '#111827',
+          800: '#1f2937',
+          700: '#374151',
+          600: '#4b5563',
+          500: '#6b7280',
+          400: '#9ca3af',
+          300: '#d1d5db',
+          200: '#e5e7eb',
+          100: '#f3f4f6',
+        },
       },
-      boxShadow: {
-        soft: 'var(--shadow-sm)',
-        mid: 'var(--shadow-md)',
-        glow: 'var(--shadow-lg)'
-      },
-      borderRadius: {
-        sm: 'var(--radius-sm)',
-        md: 'var(--radius-md)',
-        lg: 'var(--radius-lg)',
-        xl: 'var(--radius-xl)'
-      },
-      fontFamily: {
-        sans: ['var(--font-body)']
-      }
-    }
+    },
   },
-  plugins: []
+  plugins: [],
 };
+
 export default config;
