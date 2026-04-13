@@ -86,6 +86,43 @@ export default function DashboardPage() {
           ))}
         </div>
 
+                {/* Progress Overview */}
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8">
+          <h2 className="font-semibold text-base mb-4">📊 {isAr ? 'نظرة عامة على التقدم' : 'Progress Overview'}</h2>
+          <div className="space-y-4">
+            {/* Tasks Progress */}
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span>{isAr ? 'تقدم المهام' : 'Tasks Progress'}</span>
+                <span className="text-gray-400">{stats.tasks > 0 ? Math.round((stats.completedTasks / stats.tasks) * 100) : 0}%</span>
+              </div>
+              <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
+                <div className="bg-gradient-to-r from-green-500 to-green-600 h-full transition-all" style={{ width: `${stats.tasks > 0 ? (stats.completedTasks / stats.tasks) * 100 : 0}%` }}></div>
+              </div>
+              <div className="flex gap-4 mt-2 text-xs text-gray-500">
+                <span>✅ {stats.completedTasks} {isAr ? 'منجز' : 'done'}</span>
+                <span>⚡ {stats.activeTasks} {isAr ? 'نشط' : 'active'}</span>
+                <span>⏸️ {stats.tasks - stats.completedTasks - stats.activeTasks} {isAr ? 'معلق' : 'pending'}</span>
+              </div>
+            </div>
+            {/* Projects Stats */}
+            <div className="grid grid-cols-3 gap-4 pt-3 border-t border-gray-800">
+              <div>
+                <div className="text-2xl font-bold text-blue-400">{stats.projects}</div>
+                <div className="text-xs text-gray-500">{isAr ? 'مشروع' : 'Projects'}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-green-400">{stats.tasks}</div>
+                <div className="text-xs text-gray-500">{isAr ? 'مهمة' : 'Tasks'}</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-purple-400">{stats.team}</div>
+                <div className="text-xs text-gray-500">{isAr ? 'عضو' : 'Members'}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Quick Actions */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
           <h2 className="font-semibold text-base mb-4">⚡ {t.quickActions}</h2>
