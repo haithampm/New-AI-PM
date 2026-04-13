@@ -14,6 +14,12 @@ jobs:
       matrix:
         node-version: [20.x]
 
+    env:
+      DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci_db?schema=public"
+      DATABASE_URL_UNPOOLED: "postgresql://ci:ci@localhost:5432/ci_db?schema=public"
+      NEXTAUTH_SECRET: "ci-secret-placeholder-32-chars-min"
+      NEXTAUTH_URL: "http://localhost:3000"
+
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -24,13 +30,5 @@ jobs:
         run: npm install
       - name: Generate Prisma Client
         run: npx prisma generate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL }}
       - name: Build Next.js
         run: npm run build
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
