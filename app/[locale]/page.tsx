@@ -1,9 +1,26 @@
+'use client';
+import { useEffect, useState } from 'react';
+
 export default function LocalePage({
   params,
 }: {
   params: { locale: string };
 }) {
   const isAr = params.locale === 'ar';
+  const [stats, setStats] = useState({ projects: 0, completedTasks: 0, team: 0 });
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        setStats({
+          projects: data.projects ?? 0,
+          completedTasks: data.completedTasks ?? 0,
+          team: data.team ?? 0,
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
@@ -36,28 +53,30 @@ export default function LocalePage({
             : 'Manage your projects efficiently with AI technology'}
         </p>
         <a
-          href="#"
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition"
+          href={`/${params.locale}/dashboard`}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
         >
           {isAr ? 'ابدأ الآن' : 'Get Started'}
         </a>
       </section>
 
       {/* Stats */}
-      <section className="px-6 pb-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        {[
-          { label: isAr ? 'مشروع نشط' : 'Active Projects', value: '0' },
-          { label: isAr ? 'مهمة مكتملة' : 'Tasks Done', value: '0' },
-          { label: isAr ? 'أعضاء الفريق' : 'Team Members', value: '0' },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-gray-900 border border-gray-800 rounded-xl p-6 text-center"
-          >
-            <div className="text-3xl font-bold text-blue-400 mb-2">{stat.value}</div>
-            <div className="text-gray-400 text-sm">{stat.label}</div>
-          </div>
-        ))}
+      <section className="px-6 pb-20">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[
+            { label: isAr ? 'مشروع نشط' : 'Active Projects', value: stats.projects },
+            { label: isAr ? 'مهمة مكتملة' : 'Tasks Done', value: stats.completedTasks },
+            { label: isAr ? 'أعضاء الفريق' : 'Team Members', value: stats.team },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="bg-gray-900 border border-gray-800 rounded-xl p-6 text-center"
+            >
+              <div className="text-3xl font-bold text-blue-400 mb-2">{stat.value}</div>
+              <div className="text-gray-400 text-sm">{stat.label}</div>
+            </div>
+          ))}
+        </div>
       </section>
     </main>
   );
