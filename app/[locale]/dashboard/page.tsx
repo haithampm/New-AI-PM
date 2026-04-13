@@ -1,157 +1,126 @@
-export default function DashboardPage({
-  params,
-}: {
-  params: { locale: string };
-}) {
-  const isAr = params.locale === 'ar';
+'use client';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
-  const stats = [
-    {
-      label: isAr ? 'مشاريع نشطة' : 'Active Projects',
-      value: '0',
-      icon: '📁',
-      color: 'text-blue-400',
-      bg: 'bg-blue-500/10',
-    },
-    {
-      label: isAr ? 'مهام معلقة' : 'Pending Tasks',
-      value: '0',
-      icon: '⏳',
-      color: 'text-yellow-400',
-      bg: 'bg-yellow-500/10',
-    },
-    {
-      label: isAr ? 'مهام مكتملة' : 'Done Tasks',
-      value: '0',
-      icon: '✅',
-      color: 'text-green-400',
-      bg: 'bg-green-500/10',
-    },
-    {
-      label: isAr ? 'أعضاء الفريق' : 'Team Members',
-      value: '0',
-      icon: '👥',
-      color: 'text-purple-400',
-      bg: 'bg-purple-500/10',
-    },
+type Stats = { projects: number; tasks: number; team: number; completedTasks: number; activeTasks: number; };
+
+export default function DashboardPage() {
+  const { locale } = useParams() as { locale: string };
+  const isAr = locale === 'ar';
+  const [stats, setStats] = useState<Stats>({ projects: 0, tasks: 0, team: 0, completedTasks: 0, activeTasks: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/stats').then(r => r.json()).then(data => { setStats(data); setLoading(false); }).catch(() => setLoading(false));
+  }, []);
+
+  const t = {
+    appName: isAr ? 'مدير المشاريع' : 'AI Project Manager',
+    dashboard: isAr ? 'لوحة التحكم' : 'Dashboard',
+    projects: isAr ? 'المشاريع' : 'Projects',
+    tasks: isAr ? 'المهام' : 'Tasks',
+    team: isAr ? 'الفريق' : 'Team',
+    settings: isAr ? 'الإعدادات' : 'Settings',
+    welcome: isAr ? 'مرحباً بك في لوحة التحكم' : 'Welcome to your Dashboard',
+    subtitle: isAr ? 'نظرة شاملة على مشاريعك ومهامك' : 'A complete overview of your projects and tasks',
+    totalProjects: isAr ? 'إجمالي المشاريع' : 'Total Projects',
+    totalTasks: isAr ? 'إجمالي المهام' : 'Total Tasks',
+    teamMembers: isAr ? 'أعضاء الفريق' : 'Team Members',
+    completedTasks: isAr ? 'مهام منجزة' : 'Completed Tasks',
+    activeTasks: isAr ? 'مهام نشطة' : 'Active Tasks',
+    quickActions: isAr ? 'إجراءات سريعة' : 'Quick Actions',
+    newProject: isAr ? 'مشروع جديد' : 'New Project',
+    newTask: isAr ? 'مهمة جديدة' : 'New Task',
+    addMember: isAr ? 'إضافة عضو' : 'Add Member',
+    viewAll: isAr ? 'عرض الكل' : 'View All',
+  };
+
+  const statCards = [
+    { label: t.totalProjects, value: stats.projects, icon: '📁', color: 'from-blue-600 to-blue-700', link: `/${locale}/projects` },
+    { label: t.totalTasks, value: stats.tasks, icon: '✅', color: 'from-green-600 to-green-700', link: `/${locale}/tasks` },
+    { label: t.teamMembers, value: stats.team, icon: '👥', color: 'from-purple-600 to-purple-700', link: `/${locale}/team` },
+    { label: t.completedTasks, value: stats.completedTasks, icon: '🏆', color: 'from-yellow-600 to-yellow-700', link: `/${locale}/tasks` },
+    { label: t.activeTasks, value: stats.activeTasks, icon: '⚡', color: 'from-orange-600 to-orange-700', link: `/${locale}/tasks` },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="flex min-h-screen bg-gray-950 text-white" dir={isAr ? 'rtl' : 'ltr'}>
       {/* Sidebar */}
-      <div className="flex">
-        <aside className="w-64 min-h-screen bg-gray-900 border-r border-gray-800 p-4 flex flex-col gap-2">
-          <div className="flex items-center gap-2 p-3 mb-4">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">
-              AI
-            </div>
-            <span className="font-semibold">
-              {isAr ? 'مدير المشاريع' : 'AI PM'}
-            </span>
+      <aside className="w-56 bg-gray-900 border-e border-gray-800 flex flex-col p-4 gap-2 fixed h-full z-10">
+        <div className="flex items-center gap-2 mb-6">
+          <span className="bg-blue-600 text-white rounded-lg w-8 h-8 flex items-center justify-center font-bold text-sm">AI</span>
+          <span className="font-semibold text-sm">{t.appName}</span>
+        </div>
+        <Link href={`/${locale}/dashboard`} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white text-sm">🏠 {t.dashboard}</Link>
+        <Link href={`/${locale}/projects`} className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 text-sm">📁 {t.projects}</Link>
+        <Link href={`/${locale}/tasks`} className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 text-sm">✅ {t.tasks}</Link>
+        <Link href={`/${locale}/team`} className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 text-sm">👥 {t.team}</Link>
+        <Link href={`/${locale}/settings`} className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-800 text-gray-300 text-sm">⚙️ {t.settings}</Link>
+        <div className="mt-auto pt-4 border-t border-gray-800">
+          <div className="flex gap-2">
+            <Link href="/ar/dashboard" className={`flex-1 text-center py-1.5 rounded text-xs ${locale==='ar' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>AR</Link>
+            <Link href="/en/dashboard" className={`flex-1 text-center py-1.5 rounded text-xs ${locale==='en' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`}>EN</Link>
           </div>
-          {[
-            { icon: '🏠', label: isAr ? 'لوحة التحكم' : 'Dashboard', href: `/${params.locale}/dashboard`, active: true },
-            { icon: '📁', label: isAr ? 'المشاريع' : 'Projects', href: `/${params.locale}/projects`, active: false },
-            { icon: '✅', label: isAr ? 'المهام' : 'Tasks', href: `/${params.locale}/tasks`, active: false },
-            { icon: '👥', label: isAr ? 'الفريق' : 'Team', href: `/${params.locale}/team`, active: false },
-            { icon: '⚙️', label: isAr ? 'الإعدادات' : 'Settings', href: `/${params.locale}/settings`, active: false },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${
-                item.active
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-              }`}
-            >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </a>
-          ))}
-          <div className="mt-auto pt-4 border-t border-gray-800">
-            <a
-              href={`/${params.locale === 'ar' ? 'en' : 'ar'}/dashboard`}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition"
-            >
-              <span>🌐</span>
-              <span>{isAr ? 'English' : 'عربي'}</span>
-            </a>
-          </div>
-        </aside>
+        </div>
+      </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold">
-              {isAr ? 'لوحة التحكم' : 'Dashboard'}
-            </h1>
-            <p className="text-gray-400 mt-1">
-              {isAr ? 'مرحباً بك في منصة إدارة المشاريع' : 'Welcome to AI Project Manager'}
-            </p>
-          </div>
+      {/* Main */}
+      <main className="flex-1 ms-56 p-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold">{t.welcome}</h1>
+          <p className="text-gray-400 text-sm mt-1">{t.subtitle}</p>
+        </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-gray-900 border border-gray-800 rounded-xl p-4"
-              >
-                <div className={`w-10 h-10 ${stat.bg} rounded-lg flex items-center justify-center text-xl mb-3`}>
-                  {stat.icon}
-                </div>
-                <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
-                <div className="text-gray-400 text-sm mt-1">{stat.label}</div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          {statCards.map((card, i) => (
+            <Link key={i} href={card.link} className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-gray-700 transition group">
+              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center text-lg mb-3`}>{card.icon}</div>
+              <div className="text-2xl font-bold mb-1">
+                {loading ? <span className="inline-block w-8 h-6 bg-gray-800 rounded animate-pulse"></span> : card.value}
               </div>
-            ))}
-          </div>
+              <div className="text-gray-400 text-xs">{card.label}</div>
+            </Link>
+          ))}
+        </div>
 
-          {/* Recent Projects */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-lg">
-                {isAr ? 'أحدث المشاريع' : 'Recent Projects'}
-              </h2>
-              <a
-                href={`/${params.locale}/projects`}
-                className="text-sm text-blue-400 hover:text-blue-300"
-              >
-                {isAr ? 'عرض الكل' : 'View all'}
-              </a>
-            </div>
-            <div className="text-center py-10 text-gray-500">
-              <div className="text-4xl mb-3">📁</div>
-              <p>{isAr ? 'لا توجد مشاريع بعد' : 'No projects yet'}</p>
-              <a
-                href={`/${params.locale}/projects`}
-                className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm transition"
-              >
-                {isAr ? 'أنشئ مشروعاً' : 'Create Project'}
-              </a>
-            </div>
+        {/* Quick Actions */}
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
+          <h2 className="font-semibold text-base mb-4">⚡ {t.quickActions}</h2>
+          <div className="flex flex-wrap gap-3">
+            <Link href={`/${locale}/projects`} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+              + {t.newProject}
+            </Link>
+            <Link href={`/${locale}/tasks`} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+              + {t.newTask}
+            </Link>
+            <Link href={`/${locale}/team`} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+              + {t.addMember}
+            </Link>
           </div>
+        </div>
 
-          {/* Recent Tasks */}
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-lg">
-                {isAr ? 'أحدث المهام' : 'Recent Tasks'}
-              </h2>
-              <a
-                href={`/${params.locale}/tasks`}
-                className="text-sm text-blue-400 hover:text-blue-300"
-              >
-                {isAr ? 'عرض الكل' : 'View all'}
-              </a>
-            </div>
-            <div className="text-center py-10 text-gray-500">
-              <div className="text-4xl mb-3">✅</div>
-              <p>{isAr ? 'لا توجد مهام بعد' : 'No tasks yet'}</p>
-            </div>
-          </div>
-        </main>
-      </div>
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link href={`/${locale}/projects`} className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-blue-500/50 transition group">
+            <div className="text-2xl mb-2">📁</div>
+            <h3 className="font-semibold text-sm mb-1">{t.projects}</h3>
+            <p className="text-gray-500 text-xs">{stats.projects} {isAr ? 'مشروع' : 'project(s)'}</p>
+          </Link>
+          <Link href={`/${locale}/tasks`} className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-green-500/50 transition group">
+            <div className="text-2xl mb-2">✅</div>
+            <h3 className="font-semibold text-sm mb-1">{t.tasks}</h3>
+            <p className="text-gray-500 text-xs">{stats.tasks} {isAr ? 'مهمة' : 'task(s)'}</p>
+          </Link>
+          <Link href={`/${locale}/team`} className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-purple-500/50 transition group">
+            <div className="text-2xl mb-2">👥</div>
+            <h3 className="font-semibold text-sm mb-1">{t.team}</h3>
+            <p className="text-gray-500 text-xs">{stats.team} {isAr ? 'عضو' : 'member(s)'}</p>
+          </Link>
+        </div>
+      </main>
     </div>
   );
 }
